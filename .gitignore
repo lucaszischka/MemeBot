@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Maubot specific
+*.mbp
+!builds/*.mbp
+
+# Logs
+*.log
+*.out
+
+# Config files with secrets
+config.yaml
+.config/
+.env
+.env.local
+.env.production
+.env.development
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Built plugin files in root (should be in builds/)
+com.lucaszischka.maubot.MemeBot*.mbp
+builds/
+
+# Distribution and packaging
+dist/
+*.egg-info/
+.eggs/

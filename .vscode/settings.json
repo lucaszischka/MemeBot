@@ -1,0 +1,28 @@
+{
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": ["tests"],
+    "python.testing.unittestEnabled": false,
+    "files.associations": {
+        "*.yaml": "yaml",
+        "*.yml": "yaml",
+        "maubot.yaml": "yaml"
+    },
+    "terminal.integrated.env.linux": {
+        "UV_PROJECT_ENVIRONMENT": ".venv"
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        ".venv": true,
+        "*.mbp": true,
+        "builds/*.mbp": false
+    },
+    "search.exclude": {
+        ".venv": true,
+        "builds": true
+    }
+}

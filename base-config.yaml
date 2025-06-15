@@ -1,0 +1,67 @@
+# Configuration for MemeBot plugin
+# This is a Matrix bot that POSTs images to a specified server when commanded.
+
+# Auto-join settings
+# Whether to automatically join rooms when invited
+auto_join: true
+
+# Command configuration
+# Available commands users can type to trigger image promotion
+commands: ["!promote", "!p"]
+
+# Promotion server URL to which promoted images are sent
+promotion:
+  server_url: ""
+  api_token: ""
+
+
+# Cooldown Settings
+cooldowns:
+  # Minimum time between any promotions in seconds (global cooldown)
+  global: 60
+  # User-specific cooldown in seconds before they can promote again
+  user: 90
+
+# Image Processing and Validation Settings
+image:
+  # Maximum allowed image file size in bytes (default 10MB)
+  maximum_file_size_bytes: 10485760
+  # List of image formats that can be processed
+  allowed_image_formats: ["PNG", "JPEG", "JPG", "GIF", "WEBP"]
+
+# User Response Messages (in German)
+# All text responses shown to users during interaction with the bot
+messages:
+  # If the bot should respond to user messages in threads or directly in the main chat
+  reply_in_thread: true
+  # Message shown when user doesn't reply to a message containing an image
+  missing_image_reply: "↪️ Bitte antworte auf eine Nachricht, die ein Bild enthält."
+  # Error when the message the user replied to cannot be found
+  missing_replied_message: "🔍 Die Nachricht auf die du geantwortet hast, konnte nicht gefunden werden."
+  # Error when encrypted image URL is missing or invalid in E2E rooms
+  encrypted_image_url_missing: "🔗 Die Bild-URL konnte in der verschlüsselten Datei nicht gefunden werden."
+  # Error when E2E encrypted image decryption fails
+  encrypted_image_decrypt_failed: "🔐 Das Bild konnte nicht entschlüsselt werden."
+  # Error when image download from Matrix media repo fails
+  image_download_failed: "📥 Der Download des Bildes ist fehlgeschlagen."
+  # Error when image URL is missing or invalid in non-E2E rooms
+  image_missing: "🔍 Das Bild konnte nicht gefunden werden."
+  # Message shown when image file size exceeds allowed limit
+  image_size_exceeded: "📦 Die Bilddatei ist zu groß für die Verarbeitung."
+  # Message shown when user submits an unsupported image format
+  image_format_unsupported: "🖼️ Dieses Bildformat wird nicht unterstützt."
+  # Error when image format validation fails
+  image_format_invalid: "❓ Das Bildformat wurde nicht erkannt."
+  # Error when HTTP request to promotion server fails
+  promotion_server_error: "🌐 Das Bild konnte nicht zum Server gesendet werden."
+  # Time format templates for displaying cooldown timers
+  time_display_formats:
+    minutes_only_format: "{minutes} Minuten"
+    seconds_only_format: "{seconds} Sekunden"
+    minutes_and_seconds_format: "{minutes} Minuten und {seconds} Sekunden"
+  # Message shown when room-wide cooldown is active (use {time} placeholder)
+  global_cooldown_message: "⏳ Bitte warte noch {time} bevor ein neues Meme promoted werden kann."
+  # Message shown when user-specific cooldown is active (use {time} placeholder)
+  user_cooldown_message: "⌛ Du musst noch {time} warten, bevor du ein weiteres Meme promoten kannst."
+  # List of reaction emojis for successful promotion (one randomly selected)
+  success_reaction_emojis: ["👍", "🚀", "🎉", "🔥", "👏", "😎", "🤩", "💯", "✨", "🙌", "🤣", "🌟", "❤️", "💙", "💡", "💫", "🔝", "🏆", "🧠", "🤪", "😂", "🥇", "👌", "👽", "🦄", "⭐", "💥", "🔮", "💎", "🍕"]
