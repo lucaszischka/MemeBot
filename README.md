@@ -54,7 +54,7 @@ A powerful Maubot plugin that promotes images to external servers when commanded
     ↓ 
 [Bot validates image and cooldowns]
     ↓
-[Bot forwards image to promotion server] -> [Promotion server displays image]
+[Bot forwards image to promotion server] → [Promotion server displays image]
     ↓
 [Bot reacts with success emoji]
 ```
@@ -101,7 +101,7 @@ For complete configuration options and their default values, see [`base-config.y
 
 Your promotion server should accept HTTP POST requests with the following specification:
 
-```http
+```
 POST {promotion.server_url} # Config value
 Content-Type: multipart/form-data
 Authorization: Bearer {promotion.api_token} # Config value

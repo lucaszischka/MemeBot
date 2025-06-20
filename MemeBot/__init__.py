@@ -28,6 +28,9 @@ class MemeBot(Plugin, CommandMixin, ImageMixin, CooldownMixin, ServerMixin):
     client: MaubotMatrixClient
     log: Logger
     
+    # Plugin state - controls whether functionality is enabled
+    _config_valid: bool = True
+    
     # Cooldown tracking
     next_global_promotion_time: float = time.time()  # Timestamp when next global promotion is allowed
     user_promotion_cooldowns: dict[str, float] = {}  # User ID -> timestamp when next promotion is allowed for that user
@@ -47,14 +50,16 @@ class MemeBot(Plugin, CommandMixin, ImageMixin, CooldownMixin, ServerMixin):
         self.log.info(f"⏱️ Cooldowns: global={self.config['cooldowns']['global']}s, user={self.config['cooldowns']['user']}s")
         self.log.info(f"🖼️ Image settings: max_size={self.config['image']['maximum_file_size_bytes']:,} bytes, formats={self.config['image']['allowed_image_formats']}")
         
-        # Stop plugin if configuration is invalid
-        if configuration_validation_errors := self.config.check_config_values():
-            self.log.error(f"❌ Invalid configuration detected ({len(configuration_validation_errors)} errors). Plugin will not start.")
-            for error_index, validation_error in enumerate(configuration_validation_errors, 1):
-                self.log.error(f"Config error #{error_index}: {validation_error}")
-            raise RuntimeError(f"Invalid configuration - {len(configuration_validation_errors)} errors found")
-            
-        self.log.info(f"✅ Successfully started")
+        # Validate configuration and disable functionality if invalid
+        if self._validate_and_update_config_status():
+            self.log.info(f"✅ Successfully started")
+
+    def on_external_config_update(self) -> None:
+        """Called when configuration is updated externally via maubot admin interface"""
+        super().on_external_config_update()
+        # Revalidate configuration when it's updated
+        if self._validate_and_update_config_status():
+            self.log.info("✅ Configuration validation passed. Plugin functionality is now enabled.")
 
     async def stop(self) -> None:
         """Clean shutdown with usage statistics."""
@@ -66,6 +71,10 @@ class MemeBot(Plugin, CommandMixin, ImageMixin, CooldownMixin, ServerMixin):
     @event.on(EventType.ROOM_MEMBER)  # type: ignore
     async def handle_room_invitation(self, room_member_event: StateEvent) -> None:
         """Auto-join rooms when invited (if enabled in config)."""
+
+        # Ignore events as long as the configuration is invalid
+        if not self._config_valid:
+            return
 
         # Only process invites for this bot
         if room_member_event.state_key != self.client.mxid:
@@ -95,6 +104,11 @@ class MemeBot(Plugin, CommandMixin, ImageMixin, CooldownMixin, ServerMixin):
     @event.on(EventType.ROOM_MESSAGE)  # type: ignore
     async def handle_message(self, message_event: MaubotMessageEvent) -> None:
         """Main message handler: processes promotion commands and uploads images."""
+
+        # Ignore events as long as the configuration is invalid
+        if not self._config_valid:
+            return
+
         # Step 1: Check if the message is a promote command
         if not self._is_promote_command(message_event):
             return
@@ -118,3 +132,16 @@ class MemeBot(Plugin, CommandMixin, ImageMixin, CooldownMixin, ServerMixin):
             return
         # Step 7: Update cooldowns
         self._update_cooldowns(message_event.sender)
+
+    def _validate_and_update_config_status(self) -> bool:
+        """Check if the configuration is valid and update plugin status."""
+        
+        if configuration_validation_errors := self.config.check_config_values():
+            self._config_valid = False
+            self.log.error(f"❌ Invalid configuration detected ({len(configuration_validation_errors)} errors). Plugin functionality disabled.")
+            for error_index, validation_error in enumerate(configuration_validation_errors, 1):
+                self.log.error(f"Config error #{error_index}: {validation_error}")
+            return False
+        else:
+            self._config_valid = True
+            return True
