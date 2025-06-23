@@ -17,8 +17,8 @@ A powerful Maubot plugin that promotes images to external servers when commanded
   - [📦 Installation \& Setup](#-installation--setup)
     - [Prerequisites](#prerequisites)
     - [Installation Steps](#installation-steps)
+    - [Server API Requirements](#server-api-requirements)
   - [⚙️ Configuration](#️-configuration)
-    - [🌐 Server API Requirements](#-server-api-requirements)
   - [🔍 Troubleshooting](#-troubleshooting)
     - [Common Issues](#common-issues)
   - [🔧 Development \& Contributing](#-development--contributing)
@@ -75,6 +75,25 @@ A powerful Maubot plugin that promotes images to external servers when commanded
 4. **Configure** the plugin settings (see configuration section below)
 5. **Invite the bot** to your Matrix rooms and start promoting images!
 
+### Server API Requirements
+
+Your promotion server should accept HTTP POST requests with the following specification:
+
+```
+POST {promotion.server_url} # Config value
+Content-Type: multipart/form-data
+Authorization: Bearer {promotion.api_token} # Config value
+
+Body:
+- image: [binary image data]
+- filename: [original filename or "meme" if not available]
+- content_type: application/octet-stream
+```
+
+**Expected Response:**
+- `200 OK`: Image successfully processed
+- `4xx/5xx`: Error (bot will report failure to user)
+
 ## ⚙️ Configuration
 
 Configure the plugin through your Maubot web interface:
@@ -96,25 +115,6 @@ Configure the plugin through your Maubot web interface:
 > ⚠️ **Security Warning**: If your promotion server is publicly accessible on the internet, always configure an API token! Without authentication, anyone could spam your server with images. 🌍🔓
 
 For complete configuration options and their default values, see [`base-config.yaml`](base-config.yaml).
-
-### 🌐 Server API Requirements
-
-Your promotion server should accept HTTP POST requests with the following specification:
-
-```
-POST {promotion.server_url} # Config value
-Content-Type: multipart/form-data
-Authorization: Bearer {promotion.api_token} # Config value
-
-Body:
-- image: [binary image data]
-- filename: [original filename or "meme" if not available]
-- content_type: application/octet-stream
-```
-
-**Expected Response:**
-- `200 OK`: Image successfully processed
-- `4xx/5xx`: Error (bot will report failure to user)
 
 ## 🔍 Troubleshooting
 
