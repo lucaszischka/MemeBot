@@ -17,8 +17,8 @@ from MemeBot.mixins import CommandMixin, ImageMixin, CooldownMixin, ServerMixin
 
 class MemeBot(Plugin, CommandMixin, ImageMixin, CooldownMixin, ServerMixin):
     """
-    Matrix bot that promotes images to an external server when users reply to images with promotion commands.
-    Usage: Reply to an image with !promote or !p.
+    Matrix bot that promotes images to an external server when users use promotion commands.
+    Usage: Reply to an image with !promote or !p, or upload an image with the command as caption.
     """
     PLUGIN_VERSION: str = "v0.0.1"
     DEFAULT_IMAGE_FILENAME: str = "meme"
@@ -109,11 +109,15 @@ class MemeBot(Plugin, CommandMixin, ImageMixin, CooldownMixin, ServerMixin):
         if not self._config_valid:
             return
 
+        # Special response
+        if await self._handle_special_responses(message_event):
+            return
+
         # Step 1: Check if the message is a promote command
         if not self._is_promote_command(message_event):
             return
-        # Step 2: Check if the user replied to a message with the image and get it
-        target_image_message, target_image_event_id = await self._get_replied_message(message_event)
+        # Step 2: Get the target image (either from reply or the message itself)
+        target_image_message, target_image_event_id = await self._get_target_image_message(message_event)
         if not target_image_message or not target_image_event_id:
             return
         # Step 3: Check cooldowns early to avoid unnecessary image processing

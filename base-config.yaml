@@ -34,8 +34,8 @@ image:
 messages:
   # If the bot should respond to user messages in threads or directly in the main chat
   reply_in_thread: true
-  # Message shown when user doesn't reply to a message containing an image
-  missing_image_reply: "↪️ Bitte antworte auf eine Nachricht, die ein Bild enthält."
+  # Message shown when user doesn't provide a valid promotion target (reply to image or image with promotion command)
+  missing_promotion_target: "↪️ Bitte antworte auf eine Nachricht, die ein Bild enthält, oder lade ein Bild mit einem Promotion-Befehl als Begleittext hoch."
   # Error when the message the user replied to cannot be found
   missing_replied_message: "🔍 Die Nachricht auf die du geantwortet hast, konnte nicht gefunden werden."
   # Error when encrypted image URL is missing or invalid in E2E rooms
@@ -65,3 +65,20 @@ messages:
   user_cooldown_message: "⌛ Du musst noch {time} warten, bevor du ein weiteres Meme promoten kannst."
   # List of reaction emojis for successful promotion (one randomly selected)
   success_reaction_emojis: ["👍", "🚀", "🎉", "🔥", "👏", "😎", "🤩", "💯", "✨", "🙌", "🤣", "🌟", "❤️", "💙", "💡", "💫", "🔝", "🏆", "🧠", "🤪", "😂", "🥇", "👌", "👽", "🦄", "⭐", "💥", "🔮", "💎", "🍕"]
+  # Easter Egg Settings
+  easter_eggs:
+    # Probability (0.0 to 1.0) for rare special messages instead of normal reactions
+    rare_message_probability: 0.005 # 0.5% chance
+    # List of special messages for rare events (one randomly selected)
+    rare_messages:
+      - "✨ **GLITZERNDE PROMOTION!** ✨\nDein Meme funkelt vor Großartigkeit! 🌟"
+      - "🦄 **SELTENES MEME ENTDECKT!** 🦄\nDieses Meme wurde von den Einhörnern gesegnet! 🌈"
+      - "🎭 **KRITISCHES MEME!** 🎭\nDein Meme verursacht 9999 Schadenspunkte gegen Langeweile! ⚔️"
+      - "🔥 **FLAMMENDES MEME!** 🔥\nDein Meme brennt heißer als tausend Sonnen! ☀️"
+      - "💥 **EXPLOSIVES MEME!** 💥\nDieses Meme sprengt alle Erwartungen! 🎆"
+      - "🏆 **MEME DES JAHRTAUSENDS!** 🏆\nDu hast gerade Geschichte geschrieben! 📜"
+      - "🌮 **NACHO AVERAGE MEME!** 🌮\nDieses Meme ist extra käsig und knusprig! 🧀"
+      - "🍕 **PIZZA PERFECTION!** 🍕\nDein Meme ist wie eine Pizza - einfach unwiderstehlich! 😋"
+      - "🎮 **ACHIEVEMENT UNLOCKED!** 🎮\n*Rare Meme Master* - Du hast den Meme-Code geknackt! 🔓"
+      - "🔮 **MAGISCHES MEME!** 🔮\nDieses Meme wurde von den Meme-Göttern gesegnet! ✨"
+      - "🦸‍♂️ **SUPERHELDEN-MEME!** 🦸‍♂️\nNicht alle Helden tragen Umhänge, manche posten Memes! 🦸‍♀️"

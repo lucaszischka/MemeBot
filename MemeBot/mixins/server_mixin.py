@@ -61,13 +61,22 @@ class ServerMixin(MixinHost):
             return False
 
     async def _add_success_reaction(self, message_event: MaubotMessageEvent, target_image_event_id: EventID) -> None:
-        """Add a random success emoji reaction to the promoted image."""
+        """Add a random success emoji reaction to the promoted image, or rarely send a special message."""
         try:
-            # Choose a random emoji from the configured options
-            available_emoji_options: list[str] = self.config["messages"]["success_reaction_emojis"]
-            randomly_selected_emoji: str = random.choice(available_emoji_options)
-            # Add the reaction to the replied message
-            await message_event.client.react(message_event.room_id, target_image_event_id, randomly_selected_emoji)
-            self.log.info(f"{randomly_selected_emoji} Added reaction to promoted image")
+            # Easter egg: Check if we should send a rare special message instead of a reaction
+            rare_probability: float = self.config["messages"]["easter_eggs"]["rare_message_probability"]
+            if random.random() < rare_probability:
+                # Send a special easter egg message instead of a reaction
+                rare_messages: list[str] = self.config["messages"]["easter_eggs"]["rare_messages"]
+                special_message: str = random.choice(rare_messages)
+                await message_event.respond(special_message)
+                self.log.info(f"🎉 Easter egg triggered! Sent rare message instead of reaction")
+            else:
+                # Normal behavior: add a random emoji reaction
+                available_emoji_options: list[str] = self.config["messages"]["success_reaction_emojis"]
+                randomly_selected_emoji: str = random.choice(available_emoji_options)
+                # Add the reaction to the replied message
+                await message_event.client.react(message_event.room_id, target_image_event_id, randomly_selected_emoji)
+                self.log.info(f"{randomly_selected_emoji} Added reaction to promoted image")
         except Exception as reaction_error:
-            self.log.error(f"❌ Failed to add reaction emoji '{randomly_selected_emoji if randomly_selected_emoji in locals() else "unknown"}': {reaction_error}")
+            self.log.error(f"❌ Failed to add reaction emoji '{randomly_selected_emoji}': {reaction_error}")

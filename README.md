@@ -1,6 +1,6 @@
 # MemeBot Maubot Plugin
 
-A powerful Maubot plugin that promotes images to external servers when commanded in Matrix rooms. Simply reply to any image with `!promote` or `!p` to forward it to your configured promotion server.
+A powerful Maubot plugin that promotes images to external servers when commanded in Matrix rooms. Use `!promote` or `!p` commands either by replying to images or directly as image captions to forward them to your configured promotion server.
 
 [![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -27,7 +27,7 @@ A powerful Maubot plugin that promotes images to external servers when commanded
 
 ## 🚀 Features
 
-- 🖼️ **Image Promotion**: Reply to images with promotion commands to send them to an external server
+- 🖼️ **Image Promotion**: Promote images using commands either by replying to images or as image captions
 - 🔐 **E2E Encryption Support**: Works seamlessly with both encrypted and unencrypted Matrix rooms
 - 🤖 **Auto-join**: Automatically joins rooms when invited (configurable)
 - ⏱️ **Smart Cooldowns**: User-specific and global cooldowns to prevent spam
@@ -42,15 +42,29 @@ A powerful Maubot plugin that promotes images to external servers when commanded
 ### Basic Usage
 
 1. **Invite the bot**: Invite MemeBot to your Matrix room
-2. **Reply to images**: Reply to any image message with `!promote` or `!p`
+2. **Promote images**: Use `!promote` or `!p` commands in two ways:
+   - **Reply method**: Reply to any image message with the command
+   - **Caption method**: Upload an image with the command as caption
 3. **Automatic processing**: The bot will download, validate, and forward the image to your configured server
 
 ### Example Workflow
 
+**Method 1 - Reply to image:**
 ```
-[User uploads image] 
+[User A uploads image] 
     ↓
-[Another user replies with "!promote"]
+[User B replies with "!promote"]
+    ↓ 
+[Bot validates image and cooldowns]
+    ↓
+[Bot forwards image to promotion server] → [Promotion server displays image]
+    ↓
+[Bot reacts with success emoji]
+```
+
+**Method 2 - Image with caption:**
+```
+[User uploads image with caption "!promote"] 
     ↓ 
 [Bot validates image and cooldowns]
     ↓

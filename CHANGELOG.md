@@ -4,13 +4,13 @@ All notable changes to the MemeBot project will be documented in this file.
 
 ## [Unreleased]
 
-## [0.0.1] 2025-06-14
+## [0.0.1] 2025-07-15
 
 **Initial release** of MemeBot maubot plugin
 
 ### 🚀 Core Functionality
 1. Image promotion via `!promote` and `!p` commands
-2. Reply-to-image command validation
+2. Command validation
 3. Image upload to external server via HTTP POST
 4. Success emoji reaction
 

@@ -9,7 +9,7 @@ class Config(BaseProxyConfig):
     
     # Constants for validation
     REQUIRED_MESSAGES: tuple[str, ...] = (
-        "missing_image_reply", "missing_replied_message", "encrypted_image_url_missing",
+        "missing_promotion_target", "missing_replied_message", "encrypted_image_url_missing",
         "encrypted_image_decrypt_failed", "image_download_failed", "image_missing", 
         "image_size_exceeded", "image_format_unsupported", "image_format_invalid",
         "promotion_server_error", "global_cooldown_message", "user_cooldown_message"
@@ -131,5 +131,27 @@ class Config(BaseProxyConfig):
                 invalid_configs.append("messages.success_reaction_emojis must be a non-empty list")
             elif not all(isinstance(emoji, str) for emoji in self["messages"]["success_reaction_emojis"]):
                 invalid_configs.append("messages.success_reaction_emojis must contain only strings")
+            
+            # Validate easter_eggs settings
+            if "easter_eggs" not in self["messages"]:
+                invalid_configs.append("messages.easter_eggs is required")
+            elif not isinstance(self["messages"]["easter_eggs"], dict):
+                invalid_configs.append("messages.easter_eggs must be a dictionary")
+            else:
+                # Validate rare_message_probability
+                if "rare_message_probability" not in self["messages"]["easter_eggs"]:
+                    invalid_configs.append("messages.easter_eggs.rare_message_probability is required")
+                elif not isinstance(self["messages"]["easter_eggs"]["rare_message_probability"], (int, float)):
+                    invalid_configs.append("messages.easter_eggs.rare_message_probability must be a number")
+                elif not (0.0 <= self["messages"]["easter_eggs"]["rare_message_probability"] <= 1.0):
+                    invalid_configs.append("messages.easter_eggs.rare_message_probability must be between 0.0 and 1.0")
+                
+                # Validate rare_messages
+                if "rare_messages" not in self["messages"]["easter_eggs"]:
+                    invalid_configs.append("messages.easter_eggs.rare_messages is required")
+                elif not isinstance(self["messages"]["easter_eggs"]["rare_messages"], list) or not self["messages"]["easter_eggs"]["rare_messages"]:
+                    invalid_configs.append("messages.easter_eggs.rare_messages must be a non-empty list")
+                elif not all(isinstance(msg, str) for msg in self["messages"]["easter_eggs"]["rare_messages"]):
+                    invalid_configs.append("messages.easter_eggs.rare_messages must contain only strings")
         
         return invalid_configs

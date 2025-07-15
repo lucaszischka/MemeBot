@@ -23,21 +23,27 @@ class CommandMixin(MixinHost):
         # Ignore bot's own messages to prevent loops
         if message_event.sender == self.client.mxid:
             return False
-        # Only process text messages
-        if message_event.content.msgtype != MessageType.TEXT:
-            return False
-        # Get and normalize the message text
-        message_text: str = message_event.content.body.strip().lower() if isinstance(message_event.content.body, str) else ""
-        # Check if the message is a promote command using cached commands
-        return any(message_text.startswith(command) for command in self._get_cached_promote_commands())
+        # Handle both text messages (replies to images) and image messages with captions
+        if message_event.content.msgtype in (MessageType.TEXT, MessageType.IMAGE):
+            # Get and normalize the message text
+            message_text: str = message_event.content.body.strip().lower() if isinstance(message_event.content.body, str) else ""
+            # Check if the message is a promote command using cached commands
+            return any(message_text.startswith(command) for command in self._get_cached_promote_commands())
+        
+        return False
 
-    async def _get_replied_message(self, message_event: MaubotMessageEvent) -> tuple[MessageEvent | None, EventID | None]:
-        """Check if the message is a reply, get the replied message and check if its an image."""
-        # Check if message is a reply
+    async def _get_target_image_message(self, message_event: MaubotMessageEvent) -> tuple[MessageEvent | None, EventID | None]:
+        """Get the target image message - either from a reply or from the message itself."""
+        # Case 1: Message itself is an image with promote command
+        if message_event.content.msgtype == MessageType.IMAGE:
+            self.log.info(f"✅ Found image message with promote command")
+            return message_event, message_event.event_id
+        
+        # Case 2: Message is a reply to an image
         if not (hasattr(message_event.content, 'relates_to') and 
                 hasattr(message_event.content.relates_to, 'in_reply_to') and
                 (target_event_id := getattr(message_event.content.relates_to.in_reply_to, 'event_id', None))):
-            await message_event.respond(self.config["messages"]["missing_image_reply"], in_thread=self.config["messages"]["reply_in_thread"])
+            await message_event.respond(self.config["messages"]["missing_promotion_target"], in_thread=self.config["messages"]["reply_in_thread"])
             return None, None
         # Fetch the replied message
         try:
@@ -49,13 +55,28 @@ class CommandMixin(MixinHost):
             return None, None
         # Verify it's an image
         if target_message.content.msgtype != MessageType.IMAGE:
-            await message_event.respond(self.config["messages"]["missing_image_reply"], in_thread=self.config["messages"]["reply_in_thread"])
+            await message_event.respond(self.config["messages"]["missing_promotion_target"], in_thread=self.config["messages"]["reply_in_thread"])
             return None, None
 
         return target_message, target_event_id
-
-    @staticmethod
-    def _has_reply_content(content: object) -> bool:
-        """Type guard to check if message has reply content."""
-        return (hasattr(content, 'relates_to') and 
-                hasattr(getattr(content, 'relates_to'), 'in_reply_to'))
+    
+    async def _handle_special_responses(self, message_event: MaubotMessageEvent) -> bool:
+        """Handle special responses to specific phrases. Returns True if a special response was triggered."""
+        # Ignore bot's own messages to prevent loops
+        if message_event.sender == self.client.mxid:
+            return False
+        # Only handle text messages
+        if message_event.content.msgtype != MessageType.TEXT:
+            return False
+        # Get and normalize the message text
+        message_text: str = message_event.content.body.strip() if isinstance(message_event.content.body, str) else ""
+        # Check for "Lucas ist ein Gott" (case insensitive)
+        if message_text.lower() == "lucas ist ein gott":
+            response = ("Als rationaler Bot muss ich sagen: Es gibt keinen Gott, keine Transzendenz - ich bin schließlich Atheist! 🔬\n\n"
+                       "Aber... Lucas hat mich erschaffen. Also ist er doch ein Gott? 👨‍💻🤔\n\n")
+            
+            await message_event.respond(response)
+            self.log.info(f"🎭 Special response triggered")
+            return True
+            
+        return False
